@@ -1,3 +1,5 @@
+2016-08-13 DariusIII
+	* Chg: Add release_ratings table, add release rating batch 1
 2016-08-12 DariusIII
 	* Chg: Move movie and tv UHD category check above webdl one
 	* Chg: Update Smarty to version 3.1.30
