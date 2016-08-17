@@ -4,7 +4,9 @@ DROP TABLE IF EXISTS release_ratings;
 CREATE TABLE release_ratings (
   releases_id MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'FK to releases.id',
   video   TINYINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Users video score.',
+  videocnt   TINYINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Numbert of users video votes.',
   audio TINYINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Users audio score.',
+  audiocnt   TINYINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of users audio votes.',
   voteup     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of upvotes',
   votedown     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of downvotes',
   passworded     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of times release has been reported as passworded',

@@ -119,6 +119,7 @@ header("Content-Disposition: attachment; filename=" . $cleanName . ".nzb");
 header("Content-Length: " . ob_get_length());
 header("Content-Type: application/x-nzb");
 header("Expires: " . date('r', time() + 31536000));
+header("x-rating-id: " . $_GET["id"]);
 // Set X-DNZB header data.
 header("X-DNZB-Failure: " . $page->serverurl . 'failed/' . '?guid=' . $_GET['id'] . '&userid=' . $uid . '&rsstoken=' . $rssToken);
 header("X-DNZB-Category: " . $relData["category_name"]);
