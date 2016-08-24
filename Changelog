@@ -1,4 +1,16 @@
 
+2016-08-23 DariusIII
+	* Fix: Update sphinx.conf and change rt_attr_string = name to rt_attr_uint = dummy
+2016-08-22 DariusIII
+	* Fix: Wrong table name used in site-edit
+	* Chg: Add back prefiles match to tmux run
+	* Chg: Update NameFixer to use FULLTEXT search in matchPreDbFiles function
+	* Chg: Add FULLTEXT index to predb.filename
+2016-08-21 DariusIII
+	* Chg: Remove match_prefiles from tmux, should be ran manualy
+2016-08-20 DariusIIi
+	* Chg: Update SDCLiP release names predb matching
+
 2016-08-19 DariusIII
 	* Chg: Rename releases posted by ozelot from KTR to SDCLiP
 	* Fix: Missing names of movies in upcoming movies pages.
