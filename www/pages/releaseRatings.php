@@ -36,12 +36,6 @@ if ($page->users->isLoggedIn()) {
 
 if (isset($_GET['i']) && isset($rssToken) && isset($_GET['m'])) {
 
-	$rating = (new ReleaseRatings(['Settings' => $page->settings]))->addRating($_GET['i'], $uid);
-	if ($alt === false) {
-		header("X-DNZB-RCode: 404");
-		header("X-DNZB-RText: No NZB found for alternate match.");
-		$page->show404();
-	} else {
-		header('Location: ' . $page->serverurl . 'getnzb/' . $alt['guid'] . '&i=' . $uid . '&r=' . $rssToken);
-	}
+	(new ReleaseRatings(['Settings' => $page->settings]))->addRating($_GET['i'], $uid, $video, $audio, $vote, $passworded, $spam);
+
 }

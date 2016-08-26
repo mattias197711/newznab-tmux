@@ -44,13 +44,14 @@ class ReleaseRatings
 
 	/**
 	 * @param $relid
+	 * @param $userid
 	 * @param $video
 	 * @param $audio
 	 * @param $vote
 	 * @param $passworded
 	 * @param $spam
 	 */
-	public function addRating($relid, $video, $audio, $vote, $passworded, $spam)
+	public function addRating($relid, $userid, $video, $audio, $vote, $passworded, $spam)
 	{
 		if (!empty($vote) && preg_match('/\b(up|down)\b/i', $vote)) {
 			$voteplus = $vote === 'up' ? (sprintf('voteup +1')) : (sprintf('voteup'));
