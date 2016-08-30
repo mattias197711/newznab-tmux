@@ -1,4 +1,8 @@
 
+2016-08-29 DariusIII
+	* Fix: Remove duplicate r.fromname from matchPredbFT function
+	* Chg: Rename roleexcat categoryid column to categories_id
+	* Chg: Update composer.lock with new version of Lithium dev package
 2016-08-25 DariusIII
 	* Chg: Update sql schema files to be up-to-date
 2016-08-23 DariusIII
@@ -12,7 +16,6 @@
 	* Chg: Remove match_prefiles from tmux, should be ran manualy
 2016-08-20 DariusIIi
 	* Chg: Update SDCLiP release names predb matching
-
 2016-08-19 DariusIII
 	* Chg: Rename releases posted by ozelot from KTR to SDCLiP
 	* Fix: Missing names of movies in upcoming movies pages.
