@@ -54,12 +54,12 @@ class ReleaseRatings
 	public function addRating($relid, $userid, $video, $audio, $vote, $passworded, $spam)
 	{
 		if (!empty($vote) && preg_match('/\b(up|down)\b/i', $vote)) {
-			$voteplus = $vote === 'up' ? (sprintf('voteup +1')) : (sprintf('voteup'));
-			$voteminus = $vote === 'down' ? (sprintf('votedown +1')) : (sprintf('votedownn'));
+			$voteplus = $vote === 'up' ? (sprintf('voteup = voteup +1')) : '';
+			$voteminus = $vote === 'down' ? (sprintf('votedown = votedown +1')) : '';
 
 		} else {
-			$voteplus = (sprintf('voteup'));
-			$voteminus = (sprintf('votedown'));
+			$voteplus = '';
+			$voteminus = '';
 		}
 
 		if (!empty($video) && is_numeric($video)) {
@@ -101,7 +101,7 @@ class ReleaseRatings
 			}
 
 		$this->pdo->queryExec(sprintf('
-		INSERT INTO release_ratings (releases_id, video, audio, %s, passworded, spam, server)
+		INSERT INTO users_release_ratings (releases_id, video, audio, %s, passworded, spam, server)
 		VALUES (%d, %d, %d, %s, %d, %d, %d, %s)',
 				$relid,
 				!empty($video) ? $video : 0,
