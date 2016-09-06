@@ -1,4 +1,14 @@
 
+2016-09-05 DariusIII
+	* Chg: Update XSS vulnerability protection in themes.
+	* Chg: Update composer installer to version 1.2.0
+	* Fix: Content display for not logged in users in Charisma/Gentele/Omicron themes.
+2016-09-02 DariusIII
+	* Chg: Update custom yenc class handling (ported from nZEDb)
+2016-08-31 DariusIII
+	* Fix: Remove "Invite sent" text from user profile
+	* Chg: Remove upcoming pages and RottenTomato references as RT are removing all free keys in 30 days.
+	* Fix: View user profile by name as admin
 2016-08-29 DariusIII
 	* Fix: Remove duplicate r.fromname from matchPredbFT function
 	* Chg: Rename roleexcat categoryid column to categories_id
