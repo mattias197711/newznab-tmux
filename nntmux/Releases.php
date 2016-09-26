@@ -509,7 +509,7 @@ class Releases
 					CONCAT(cp.title, '-', c.title) AS category_name,
 					%s AS category_ids,
 					groups.name AS group_name,
-					rn.id AS nfoid, re.releases_id AS reid,
+					rn.releases_id AS nfoid, re.releases_id AS reid,
 					rt.video, rt.audio, rt.voteup, rt.votedown, rt.passworded, rt.spam,
 					tve.firstaired,
 					(SELECT df.failed) AS failed
@@ -953,7 +953,7 @@ class Releases
 				%s AS category_ids,
 				(SELECT df.failed) AS failed,
 				groups.name AS group_name,
-				rn.id AS nfoid,
+				rn.releases_id AS nfoid,
 				re.releases_id AS reid,
 				cp.id AS categoryparentid,
 				rt.video, rt.audio, rt.voteup, rt.votedown, rt.passworded, rt.spam,
@@ -1125,6 +1125,9 @@ class Releases
 		);
 
 		$releases = $this->pdo->query($sql, true, NN_CACHE_EXPIRY_MEDIUM);
+		if (!empty($releases) && count($releases)) {
+			$releases[0]['_totalrows'] = $this->getPagerCount($baseSql);
+		}
 		return $releases;
 	}
 
@@ -1159,7 +1162,7 @@ class Releases
 				CONCAT(cp.title, ' > ', c.title) AS category_name,
 				%s AS category_ids,
 				groups.name AS group_name,
-				rn.id AS nfoid,
+				rn.releases_id AS nfoid,
 				re.releases_id AS reid
 			FROM releases r
 			LEFT JOIN categories c ON c.id = r.categories_id
@@ -1182,6 +1185,9 @@ class Releases
 		);
 		$releases = $this->pdo->query($sql, true, NN_CACHE_EXPIRY_MEDIUM);
 
+		if (!empty($releases) && count($releases)) {
+			$releases[0]['_totalrows'] = $this->getPagerCount($baseSql);
+		}
 		return $releases;
 	}
 
@@ -1239,6 +1245,9 @@ class Releases
 		);
 		$releases = $this->pdo->query($sql, true, NN_CACHE_EXPIRY_MEDIUM);
 
+		if (!empty($releases) && count($releases)) {
+			$releases[0]['_totalrows'] = $this->getPagerCount($baseSql);
+		}
 		return $releases;
 	}
 

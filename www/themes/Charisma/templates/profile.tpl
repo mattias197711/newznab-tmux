@@ -59,6 +59,12 @@
 																<th width="200">Role</th>
 																<td>{$user.rolename}</td>
 															</tr>
+															{if !empty($user.rolechangedate)}
+																<tr>
+																	<th width="200">Role expiration date</th>
+																	<td>{$user.rolechangedate|date_format:"%A, %B %e, %Y"}</td>
+																</tr>
+															{/if}
 															</tbody>
 														</table>
 														<table class="data table table-condensed table-striped table-responsive table-hover">
@@ -125,6 +131,10 @@
 																		   class="label label-danger">GENERATE NEW
 																			KEY</a>
 																	</td>
+																</tr>
+																<tr>
+																	<th title="Admin Notes">Notes:</th>
+																	<td>{$user.notes|escape:htmlall}{if $user.notes|count_characters > 0}<br/>{/if}<a href="{$smarty.const.WWW_TOP}/admin/user-edit.php?id={$user.id}#notes" class="label label-info">Add/Edit</a></td>
 																</tr>
 															{/if}
 															</tbody>
