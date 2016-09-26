@@ -9,6 +9,7 @@ CREATE TABLE release_ratings (
   videocnt   TINYINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Numbert of users video votes.',
   voteup     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of upvotes',
   votedown     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of downvotes',
+  votes        MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Total votes',
   passworded     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of times release has been reported as passworded',
   spam     MEDIUMINT(11) UNSIGNED  NOT NULL DEFAULT '0' COMMENT 'Number of times release is reported as spam',
   PRIMARY KEY          (releases_id)

@@ -54,8 +54,8 @@ class ReleaseRatings
 	public function addRating($relid, $userid, $video, $audio, $vote, $passworded, $spam)
 	{
 		if (!empty($vote) && preg_match('/\b(up|down)\b/i', $vote)) {
-			$voteplus = $vote === 'up' ? (sprintf('voteup = voteup +1')) : '';
-			$voteminus = $vote === 'down' ? (sprintf('votedown = votedown +1')) : '';
+			$voteplus = $vote === 'up' ? (sprintf('voteup = voteup + 1')) : '';
+			$voteminus = $vote === 'down' ? (sprintf('votedown = votedown + 1')) : '';
 
 		} else {
 			$voteplus = '';
@@ -63,13 +63,13 @@ class ReleaseRatings
 		}
 
 		if (!empty($video) && is_numeric($video)) {
-			$value = $this->pdo->query(sprintf('SELECT video, voteup, votedown FROM release_ratings WHERE releases_id = %d', $relid));
-			$votecnt = $value['voteup'] + $value['votedown'];
-			$videor = ($value['video'] + $video)/2;
+			$value = $this->pdo->query(sprintf('SELECT video, voteup, votedown, votes FROM release_ratings WHERE releases_id = %d', $relid));
+			$votecnt = $value['votes'];
+			$videor = $value['video']/$value['votes'];
 		}
 
 			$check = $this->pdo->queryDirect(sprintf('
-											SELECT audio, video, voteup, votedown, passworded, spam
+											SELECT audio, video, voteup, votedown, votes, passworded, spam
 											FROM release_ratings
 											WHERE releases_id = %d',
 					$relid
@@ -83,17 +83,22 @@ class ReleaseRatings
 									UPDATE release_ratings
 									SET
 									audio = %s,
+									%d,
 									video = %s,
+									videocnt = %d,
 									voteup = %s,
 									votedown = %s,
-									passworded = %s,
-									spam = %s',
-								$audior,
-								$videor,
+									votes = votes +1,
+									%s,
+									%s',
+								$audio,
+								(!empty($dbl['audio'] ? sprintf('audiocnt = audiocnt + 1') : '')),
+								$video,
+								(!empty($dbl['video'] ? sprintf('videocnt = videocnt + 1') : '')),
 								$voteplus,
 								$voteminus,
-								$pass,
-								$spm
+								(!empty($dbl['passworded'] ? sprintf('passworded = passworded + 1') : '')),
+								(!empty($dbl['spam'] ? sprintf('spam = spam + 1') : ''))
 							)
 						);
 					}
@@ -101,12 +106,13 @@ class ReleaseRatings
 			}
 
 		$this->pdo->queryExec(sprintf('
-		INSERT INTO users_release_ratings (releases_id, video, audio, %s, passworded, spam, server)
+		INSERT INTO users_release_ratings (releases_id, video, audio, users_id, votes, passworded, spam, server)
 		VALUES (%d, %d, %d, %s, %d, %d, %d, %s)',
 				$relid,
 				!empty($video) ? $video : 0,
 				!empty($audio) ? $audio : 0,
-				$votes,
+				$userid,
+				$votecnt,
 				$passworded,
 				$spam
 			)
