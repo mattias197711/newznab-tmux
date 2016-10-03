@@ -34,6 +34,25 @@ if (isset($_GET['i']) && isset($uid) && is_numeric($uid) && isset($rssToken) && 
 
 	switch ('m') {
 		case 'rp':
+			$rating->addRating($relid, $uid, '', '', '', $_GET['rp'], '', '');
+			break;
+		case 'rpr':
+			$rating->addRating($relid, $uid, '', '', '', '', '', $_GET['pr']);
+			break;
+		case 'rs':
+			$rating->addRating($relid, $uid, '', '', '', '', $_GET['rs'], '');
+			break;
+		case 'r':
+			if (isset($_GET['r']) && $_GET['r'] === 'videoQuality' && isset($_GET['rn'])) {
+				$rating->addRating($relid, $uid, $_GET['rn'], '', '', '', '', '');
+			} elseif (isset($_GET['r']) && $_GET['r'] === 'audioQuality' && isset($_GET['rn'])) {
+				$rating->addRating($relid, $uid, '', $_GET['rn'], '', '', '', '');
+			}
+			break;
+		case 'v':
+			if (isset($_GET['r']) && $_GET['r'] === 'overall' && isset($_GET['v'])) {
+				$rating->addRating($relid, $uid, '', '', $_GET['v'], '', '', '');
+			}
 			break;
 	}
 }

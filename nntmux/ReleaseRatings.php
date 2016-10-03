@@ -14,7 +14,7 @@
  *
  * @link      <http://www.gnu.org/licenses/>.
  * @author    DariusIII
- * @copyright 2016 newznab-tmux
+ * @copyright 2016 NNTmux
  */
 namespace nntmux;
 
@@ -50,8 +50,9 @@ class ReleaseRatings
 	 * @param $vote
 	 * @param $passworded
 	 * @param $spam
+	 * @param $server
 	 */
-	public function addRating($relid, $userid, $video, $audio, $vote, $passworded, $spam)
+	public function addRating($relid, $userid, $video, $audio, $vote, $passworded, $spam, $server)
 	{
 		if (!empty($vote) && preg_match('/\b(up|down)\b/i', $vote)) {
 			$voteplus = $vote === 'up' ? (sprintf('voteup = voteup + 1')) : '';
@@ -62,24 +63,18 @@ class ReleaseRatings
 			$voteminus = '';
 		}
 
-		if (!empty($video) && is_numeric($video)) {
-			$value = $this->pdo->query(sprintf('SELECT video, voteup, votedown, votes FROM release_ratings WHERE releases_id = %d', $relid));
-			$votecnt = $value['votes'];
-			$videor = $value['video']/$value['votes'];
-		}
+		$check = $this->pdo->queryDirect(sprintf('
+										SELECT audio, video, voteup, votedown, votes, passworded, spam
+										FROM release_ratings
+										WHERE releases_id = %d',
+				$relid
+			)
+		);
 
-			$check = $this->pdo->queryDirect(sprintf('
-											SELECT audio, video, voteup, votedown, votes, passworded, spam
-											FROM release_ratings
-											WHERE releases_id = %d',
-					$relid
-				)
-			);
-
-			if ($check instanceof \Traversable) {
-				foreach ($check AS $dbl) {
-					if ($dbl['releases_id'] == $relid) {
-						$this->pdo->queryExec(sprintf('
+		if ($check instanceof \Traversable) {
+			foreach ($check as $dbl) {
+				if ($dbl['releases_id'] == $relid) {
+					$this->pdo->queryExec(sprintf('
 									UPDATE release_ratings
 									SET
 									audio = %s,
@@ -91,30 +86,55 @@ class ReleaseRatings
 									votes = votes +1,
 									%s,
 									%s',
-								$audio,
-								(!empty($dbl['audio'] ? sprintf('audiocnt = audiocnt + 1') : '')),
-								$video,
-								(!empty($dbl['video'] ? sprintf('videocnt = videocnt + 1') : '')),
-								$voteplus,
-								$voteminus,
-								(!empty($dbl['passworded'] ? sprintf('passworded = passworded + 1') : '')),
-								(!empty($dbl['spam'] ? sprintf('spam = spam + 1') : ''))
-							)
-						);
-					}
+							$audio,
+							(!empty($dbl['audio'] ? sprintf('audiocnt = audiocnt + 1') : '')),
+							$video,
+							(!empty($dbl['video'] ? sprintf('videocnt = videocnt + 1') : '')),
+							$voteplus,
+							$voteminus,
+							(!empty($dbl['passworded'] ? sprintf('passworded = passworded + 1') : '')),
+							(!empty($dbl['spam'] ? sprintf('spam = spam + 1') : ''))
+						)
+					);
+				} else {
+					$this->pdo->queryExec(sprintf('
+									INSERT INTO release_ratings
+									releases_id = %d,
+									audio = %s,
+									%s,
+									video = %s,
+									%s,
+									voteup = %s,
+									votedown = %s,
+									votes = votes + 1,
+									%s,
+									%s',
+							$relid,
+							$audio,
+							(!empty($dbl['audio'] ? sprintf('audiocnt = audiocnt + 1') : '')),
+							$video,
+							(!empty($dbl['video'] ? sprintf('videocnt = videocnt + 1') : '')),
+							$voteplus,
+							$voteminus,
+							(!empty($dbl['passworded'] ? sprintf('passworded = passworded + 1') : '')),
+							(!empty($dbl['spam'] ? sprintf('spam = spam + 1') : ''))
+						)
+					);
 				}
 			}
+		}
 
 		$this->pdo->queryExec(sprintf('
 		INSERT INTO users_release_ratings (releases_id, video, audio, users_id, votes, passworded, spam, server)
-		VALUES (%d, %d, %d, %s, %d, %d, %d, %s)',
+		VALUES (%d, %d, %d, %d, %s, %d, %d, %s)',
 				$relid,
 				!empty($video) ? $video : 0,
 				!empty($audio) ? $audio : 0,
 				$userid,
-				$votecnt,
+				sprintf('votes = votes +1'),
 				$passworded,
-				$spam
+				$spam,
+				$this->pdo->escapeString($server)
 			)
 		);
 	}
