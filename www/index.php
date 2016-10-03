@@ -51,6 +51,7 @@ switch ($page->page) {
 	case 'profileedit':
 	case 'queue':
 	case 'register':
+	case 'releaseRatings':
 	case 'sabqueuedata':
 	case 'search':
 	case 'sendtocouch':
