@@ -239,7 +239,7 @@ class Releases
 				df.failed AS failed,
 				rn.releases_id AS nfoid,
 				re.releases_id AS reid,
-				rt.video, rt.audio, rt.voteup, rt.votedown, rt.passworded, rt.spam,
+				rt.*,
 				v.tvdb, v.trakt, v.tvrage, v.tvmaze, v.imdb, v.tmdb,
 				tve.title, tve.firstaired
 			FROM releases r
@@ -510,7 +510,7 @@ class Releases
 					%s AS category_ids,
 					groups.name AS group_name,
 					rn.releases_id AS nfoid, re.releases_id AS reid,
-					rt.video, rt.audio, rt.voteup, rt.votedown, rt.passworded, rt.spam,
+					rt.*,
 					tve.firstaired,
 					(SELECT df.failed) AS failed
 				FROM releases r
@@ -956,7 +956,7 @@ class Releases
 				rn.releases_id AS nfoid,
 				re.releases_id AS reid,
 				cp.id AS categoryparentid,
-				rt.video, rt.audio, rt.voteup, rt.votedown, rt.passworded, rt.spam,
+				rt.*,
 				v.tvdb, v.trakt, v.tvrage, v.tvmaze, v.imdb, v.tmdb,
 				tve.firstaired
 			FROM releases r

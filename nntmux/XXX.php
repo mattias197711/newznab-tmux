@@ -216,6 +216,14 @@ class XXX
 				GROUP_CONCAT(r.comments ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_comments,
 				GROUP_CONCAT(r.grabs ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_grabs,
 				GROUP_CONCAT(df.failed ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_failed,
+				GROUP_CONCAT(rrt.audio ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_audio,
+				GROUP_CONCAT(rrt.video ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_video,
+				GROUP_CONCAT(rrt.voteup ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_voteup,
+				GROUP_CONCAT(rrt.votedown ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_votedown,
+				GROUP_CONCAT(rrt.votes ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_votes,
+				GROUP_CONCAT(rrt.passworded ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_passworded,
+				GROUP_CONCAT(rrt.spam ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_spam,
+				GROUP_CONCAT(rrt.server ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_server,
 				GROUP_CONCAT(cp.title, ' > ', c.title ORDER BY r.postdate DESC SEPARATOR ',') AS grp_release_catname,
 			xxx.*, UNCOMPRESS(xxx.plot) AS plot,
 			g.name AS group_name,
@@ -224,6 +232,7 @@ class XXX
 			LEFT OUTER JOIN groups g ON g.id = r.groups_id
 			LEFT OUTER JOIN release_nfos rn ON rn.releases_id = r.id
 			LEFT OUTER JOIN dnzb_failures df ON df.release_id = r.id
+			LEFT OUTER JOIN release_ratings rrt ON rrt.releases_id = r.id
 			LEFT OUTER JOIN categories c ON c.id = r.categories_id
 			LEFT OUTER JOIN categories cp ON cp.id = c.parentid
 			INNER JOIN xxxinfo xxx ON xxx.id = r.xxxinfo_id
