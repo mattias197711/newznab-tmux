@@ -24,15 +24,24 @@
 		{foreach $serieslist as $sletter => $series}
 			<tr>
 				<td colspan="10">
-					<h2>{$sletter}...</h2>
-					<form class="form pull-right" style="margin-top:-35px;">
-						<form name="showsearch" class="navbar-form" action="" method="get">
-							<div class="input-append">
-								<input class="form-control" style="width: 150px;" id="title appendedInputButton" type="text" name="title" value="{$showname}" placeholder="Search here"/>
-								<button type="submit" class="btn btn-default">GO</button>
-							</div>
-						</form>
-					</form>
+					<div class="row">
+						<div class="col-md-3">
+							<h2>{$sletter}</h2>
+						</div>
+						<div class="col-md-9">
+							<form class="form pull-right" style="margin-top:-35px;">
+								<form name="showsearch" class="navbar-form" action="" method="get">
+									<div class="input-group">
+										<input class="form-control" style="width: 150px;"
+											   id="title appendedInputButton"
+											   type="text" name="title" value="{$series.title}"
+											   placeholder="Search here"/>
+										<button type="submit" class="btn btn-success">GO</button>
+									</div>
+								</form>
+							</form>
+						</div>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -44,7 +53,7 @@
 			</tr>
 			{foreach $series as $s}
 				<tr>
-					<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.id}">{$s.title|escape:"htmlall"}</a>{if $s.prevdate != ''}<br /><span class="label label-info">Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}</span>{/if}</td>
+					<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.id}">{if !empty($s.title)}{$s.title|escape:"htmlall"}{/if}</a>{if $s.prevdate != ''}<br /><span class="label label-info">Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}</span>{/if}</td>
 					<td>{$s.publisher|escape:"htmlall"}</td>
 					<td>{$s.countries_id|escape:"htmlall"}</td>
 					<td class="mid">

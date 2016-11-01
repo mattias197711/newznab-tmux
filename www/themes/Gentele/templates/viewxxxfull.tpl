@@ -87,45 +87,17 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-xlg-12 portlets">
+						<div class="col-lg-12 col-sm-12 col-xs-12">
 							<div class="panel panel-default">
 								<div class="panel-body pagination2">
 									<table style="width:100%;"
 										   class="data table table-striped responsive-utilities jambo-table">
 										<tr>
 											<th><input id="check-all" type="checkbox" class="flat-all"/> Select All</th>
-											<th>Name<br/>
-												<a title="Sort Descending" href="{$orderbyname_desc}">
-													<i class="fa fa-icon-caret-down"></i>
-												</a>
-												<a title="Sort Ascending" href="{$orderbyname_asc}">
-													<i class="fa fa-icon-caret-up"></i>
-												</a>
-											</th>
-											<th>Category<br/>
-												<a title="Sort Descending" href="{$orderbycat_desc}">
-													<i class="fa fa-icon-caret-down"></i>
-												</a>
-												<a title="Sort Ascending" href="{$orderbycat_asc}">
-													<i class="fa fa-icon-caret-up"></i>
-												</a>
-											</th>
-											<th>Posted<br/>
-												<a title="Sort Descending" href="{$orderbyposted_desc}">
-													<i class="fa fa-icon-caret-down"></i>
-												</a>
-												<a title="Sort Ascending" href="{$orderbyposted_asc}">
-													<i class="fa fa-icon-caret-up"></i>
-												</a>
-											</th>
-											<th>Size<br/>
-												<a title="Sort Descending" href="{$orderbysize_desc}">
-													<i class="fa fa-icon-caret-down"></i>
-												</a>
-												<a title="Sort Ascending" href="{$orderbysize_asc}">
-													<i class="fa fa-icon-caret-up"></i>
-												</a>
-											</th>
+											<th>Name</th>
+											<th>Category</th>
+											<th>Posted</th>
+											<th>Size</th>
 											<th>Action</th>
 										</tr>
 										{assign var="msplits" value=","|explode:$result.grp_release_id}
@@ -159,9 +131,9 @@
 																class="modal_nfo label label-primary text-muted">NFO</a>
 														</span>{/if}
 													{if $mpass[$m@index] == 2}
-														<i class="fa fa-icon-lock"></i>
+														<i class="fa fa-lock"></i>
 													{elseif $mpass[$m@index] == 1}
-														<i class="fa fa-icon-lock"></i>
+														<i class="fa fa-lock"></i>
 													{/if}
 												</td>
 												<td class="less"><span

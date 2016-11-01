@@ -133,33 +133,38 @@ class Category
 	 *
 	 * @return string $catsrch
 	 */
-	public function getCategorySearch($cat = [])
+	public function getCategorySearch(array $cat = [])
 	{
 		$catsrch = ' (';
 
 		foreach ($cat as $category) {
 
-			$chlist = '-99';
+			$chlist = '';
 
 			if ($category != -1 && $this->isParent($category)) {
 				$children = $this->getChildren($category);
 
 				foreach ($children as $child) {
-					$chlist .= ', ' . $child['id'];
+					$chlist .= "{$child['id']}, ";
 				}
+				$chlist = rtrim($chlist, ", ");
 			}
 
-			if ($chlist != '-99') {
-				$catsrch .= ' r.categories_id IN (' . $chlist . ') OR ';
+			if ($chlist != '') {
+				$catsrch .= " r.categories_id IN ({$chlist}) OR ";
 			} else {
 				$catsrch .= sprintf(' r.categories_id = %d OR ', $category);
 			}
 			$catsrch .= '1=2 )';
 		}
-
 		return $catsrch;
 	}
 
+	/**
+	 * Returns a concatenated list of other categories
+	 *
+	 * @return string
+	 */
 	public static function getCategoryOthersGroup()
 	{
 		return implode(",",
@@ -174,7 +179,8 @@ class Category
 				self::XXX_OTHER,
 				self::OTHER_MISC,
 				self::OTHER_HASHED
-			]);
+			]
+		);
 	}
 
 	public static function getCategoryValue($category)
@@ -364,7 +370,7 @@ class Category
 	 */
 	public function update($id, $status, $desc, $disablepreview, $minsize, $maxsize)
 	{
-		return $this->pdo->queryExec(sprintf("update categories set disablepreview = %d, status = %d, minsizetoformrelease = %d, maxsizetoformrelease = %d, description = %s where id = %d", $disablepreview, $status, $minsize, $maxsize, $this->pdo->escapeString($desc), $id));
+		return $this->pdo->queryExec(sprintf("UPDATE categories SET disablepreview = %d, status = %d, minsizetoformrelease = %d, maxsizetoformrelease = %d, description = %s WHERE id = %d", $disablepreview, $status, $minsize, $maxsize, $this->pdo->escapeString($desc), $id));
 	}
 
 	/**
@@ -372,21 +378,35 @@ class Category
 	 *
 	 * @return array
 	 */
-	public function getForMenu($excludedcats = [])
+	public function getForMenu($excludedcats = [], $roleexcludedcats = [])
 	{
 		$ret = [];
 
 		$exccatlist = '';
-		if (count($excludedcats) > 0) {
+		if (count($excludedcats) > 0 && count($roleexcludedcats) == 0) {
 			$exccatlist = ' AND id NOT IN (' . implode(',', $excludedcats) . ')';
+		} elseif (count($excludedcats) > 0 && count($roleexcludedcats) > 0) {
+			$exccatlist = ' AND id NOT IN (' . implode(',', $excludedcats) . ',' . implode(',', $roleexcludedcats) . ')';
+		} elseif (count($excludedcats) == 0 && count($roleexcludedcats) > 0) {
+			$exccatlist = ' AND id NOT IN (' . implode(',', $roleexcludedcats) . ')';
 		}
 
 		$arr = $this->pdo->query(
 			sprintf('SELECT * FROM categories WHERE status = %d %s', Category::STATUS_ACTIVE, $exccatlist),
 			true, NN_CACHE_EXPIRY_LONG
 		);
+
+		foreach($arr as $key => $val) {
+			if($val['id'] == '0') {
+				$item = $arr[$key];
+				unset($arr[$key]);
+				array_push($arr, $item);
+				break;
+			}
+		}
+
 		foreach ($arr as $a) {
-			if ($a['parentid'] == '') {
+			if (empty($a['parentid'])) {
 				$ret[] = $a;
 			}
 		}

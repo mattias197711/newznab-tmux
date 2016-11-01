@@ -9,7 +9,7 @@
 </div>
 <div class="box-body">
 	<div class="row">
-		<div class="col-xlg-12 portlets">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
 			<div class="panel panel-default">
 				<div class="panel-body pagination2">
 					<h1>{$release.searchname|escape:"htmlall"} {if !empty($failed)}<span class="btn btn-default btn-xs" title="This release has failed to download for some users">
@@ -527,7 +527,7 @@
 																</tr>
 																<tr>
 																	<th width="140">Poster</th>
-																	<td>{$release.fromname|escape:"htmlall"}</td>
+																	<td><a title="Find releases by this poster" href="{$smarty.const.WWW_TOP}/search?searchadvr=&searchadvsubject=&searchadvposter={$release.fromname|escape:"htmlall"}&searchadvfilename=&searchadvdaysnew=&searchadvdaysold=&searchadvgroups=-1&searchadvcat=-1&searchadvsizefrom=-1&searchadvsizeto=-1&searchadvhasnfo=0&searchadvhascomments=0&search_type=adv">{$release.fromname|escape:"htmlall"}</a></td>
 																</tr>
 																<tr>
 																	<th width="140">Posted</th>
@@ -548,10 +548,7 @@
 																		<th width="140">Release
 																			Info
 																		</th>
-																		<td>{if $release.regexid != ""}Regex Id (
-																				<a href="{$smarty.const.WWW_TOP}/admin/regex-list.php?group={$release.group_name|escape:"url"}#{$release.regexid}">{$release.regexid}</a>
-																				)
-																			{/if}
+																		<td>
 																			{if $release.gid != ""}
 																				Global Id ({$release.gid})
 																			{/if}
@@ -808,7 +805,8 @@
 									{/if}
 									{if isset($game.backdrop) && $game.backdrop == 1}
 										<div id="pane10" class="tab-pane">
-											<img src="{$smarty.const.WWW_TOP}/covers/games/{$game.id}-backdrop.jpg"
+											<img class="img-responsive" src="{$smarty.const.WWW_TOP}/covers/games/{$game.id}-backdrop.jpg"
+												 width="500" border="0"
 												 alt="{$game.title|escape:"htmlall"}"
 												 data-toggle="modal"
 												 data-target="#modal-image"/>

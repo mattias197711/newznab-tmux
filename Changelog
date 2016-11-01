@@ -1,3 +1,78 @@
+2016-10-31 DariusIII
+	* Chg: Replace duplicate categorySearch function in releases and exclude leading -99 improving query speed
+	* Chg: Add back button to most of the edit pages in admin area
+2016-10-29 DariusIII
+	* Chg: Switch from php-gd to php-imagick in ReleaseImage class
+2016-10-28 DariusIII
+	* Chg: Categorize VERUM releases as TV Sport
+		Note: run php misc/testing/Releases/recategorize.php all to recategorize releases properly
+	* Chg: check_covers now searches for covers less than 2 days old.
+	* Fix: decrypt_hashes uses wrong index to send to NameFixer (fixes issue #122)
+2016-10-27 DariusIII
+	* Chg: Speed up browsing and api response
+2016-10-26 DariusIII
+	* Chg: Switch to php-imagick for previews/cover processing in ReleaseImage class
+2016-10-25 DariusIII
+	* Chg: Use Imagick to detect broken sample images
+	* Chg: Update composer.lock with new versions of font-awesome (4.7.0) and moinax/tvdb (1.0.6)
+2016-10-24 DariusIII
+	* Chg: Search posts by poster by clicking on poster name on details page
+2016-10-21 DariusIII
+	* Chg: Remove now not needed yenc initiation code from NNTP class.
+	* Chg: Add support for topic locking/unlocking in forum
+2016-10-20 DariusIII
+	* Chg: Properly add topic deletion to forum
+	* Fix: Role excluded categories work properly now
+	* Chg: Change in how OTHER categories are "rendered" in themes, now they can be also excluded from frontend by user
+2016-10-18 DariusIII
+	* Chg: Add distinction between cli and web php errors for easier tracking
+	* Chg: Increase the height of category exclusion selection table in all the themes
+	* Fix: Segfaults on PPA (possible fix)
+2016-10-16 DariusIII
+	* Fix: Wrong table used in deleteSingle function
+2016-10-14 DariusIII
+	* Fix: Prevent some more undefined index notices
+	* Fix: Prevent undefined index isadmin in forumpost.tpl
+	* Fix: Remove references to regexid
+	* Fix: Wrong column name in addAlternateNfo function
+	* Fix: lookuppar2 setting in NZBContents class.
+	* Chg: Add new favicon
+	* Fix: Caret icons display in viewxxxfull
+	* Chg: Add more ordering options to XXX to prevent undefined index errors
+	* Fix: Remove episodeArray from detals.php
+	* Fix: Remove missplaced semicolon from mysql-ddl.sql
+	* Chg: Update composer with new version of rarinfo
+2016-10-13 DariusIII
+	* Chg: Remove TraktTv cover support for movies and TV (Trakt will not serve any images after october 31)
+	* Chg: getBrowseCount function now returns proper value for total count of releases for API totalrows
+	* Fix: getBrowseRange query missing group_name used in API extended parameter
+2016-10-12 DariusIII
+	* Chg: Update composer.json with new version of composer asset plugin
+	* Chg: Add missing user settings to mysql-ddl.sql, remove Episode.php and episodeinfo table related settings
+2016-10-11 DariusIII
+	* Chg: Update README.md
+	* Fix: Advanced/Basic search toggle in Gamma theme
+	* Fix: Search button on TV series list
+	* Fix: TinyMCE URL handling
+	* Chg: Add ability to edit posts on forum.
+2016-10-10 DariusIII
+	* Chg: Add release naming regex for a.b.multimedia.anime.highspeed for better release naming
+	* Chg: Add release_naming_regex for a.b.movies group DJ releases
+2016-10-07 DariusIII
+	* Chg: Add user deletion to admin user edit
+	* Chg: Update composer with new version of RarInfo
+	* Fix: Search button design in Charisma/Gentele/Omicron themes for advanced search
+2016-10-16 DariusIII
+	* Chg: Add flexboxgrid support to Charisma/Gentele/Omicron themes, adjust the themes accordingly
+	* Chg: Adjust the look of login page on Gentele theme
+2016-10-05 DariusIII
+	* Fix: Gentele theme Series and Anime list visibility
+	* Chg: Add caching to getPagerCount function to reduce load on indexers with many API calls
+	* Fix: Logic in queries for xxx and srr renaming in NameFixer.
+2016-10-04 DariusIII
+	* Fix: Fix xxx and srr renaming queries
+	* Chg: Remove unused Max Messages Per Run setting from admin->edit site
+	* Chg: Add renaming based on included srr file in release
 2016-10-03 DariusIII
 	* Fix: Add missing lamepath to 10-settings.tsv (fixes issue #120)
 2016-09-30 DariusIII

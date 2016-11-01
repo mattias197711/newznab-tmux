@@ -46,6 +46,7 @@ switch ($page->page) {
 	case 'newposterwall':
 	case 'nfo':
 	case 'nzbgetqueuedata':
+	case 'post_edit':
 	case 'predb':
 	case 'profile':
 	case 'profileedit':
@@ -60,6 +61,7 @@ switch ($page->page) {
 	case 'sitemap':
 	case 'sysinfo':
 	case 'terms-and-conditions':
+	case 'topic_delete':
 	case 'upcoming':
 	case 'xxx':
 	case 'xxxmodal':

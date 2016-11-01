@@ -11,7 +11,7 @@
 	<div class="box col-md-12">
 		<div class="box-content">
 			<div class="row">
-				<div class="col-xlg-12 portlets">
+				<div class="col-lg-12 col-sm-12 col-xs-12">
 					<div class="panel panel-default">
 						<div class="panel-body pagination2">
 							{if isset($error) && $error != ''}
@@ -77,7 +77,7 @@
 														<tr>
 															<th width="200"></th>
 															<td>
-																{html_options style="height:105px;" class="form-control" data-placeholder="Choose categories to exclude" multiple=multiple name="exccat[]" options=$catlist selected=$userexccat}
+																{html_options style="height:305px;" class="form-control" data-placeholder="Choose categories to exclude" multiple=multiple name="exccat[]" options=$catlist selected=$userexccat}
 															</td>
 														</tr>
 														</tbody>

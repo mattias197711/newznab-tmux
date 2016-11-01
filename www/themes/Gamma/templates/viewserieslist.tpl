@@ -11,8 +11,8 @@
 </p>
 <form class="form pull-right" style="margin-top:-35px;">
 	<form name="showsearch" class="navbar-form" action="" method="get">
-		<div class="input-append">
-			<input class="input-medium" id="title appendedInputButton" type="text" name="title" value="{$showname}" class="span2" placeholder="Search here"/>
+		<div class="input-group">
+			<input class="input-medium span2" id="title appendedInputButton" type="text" name="title" value="{$series.title}" placeholder="Search here"/>
 			<button type="submit" class="btn">GO</button>
 		</div>
 	</form>
@@ -41,7 +41,7 @@
 		</tr>
 		{foreach $series as $s}
 			<tr class="{cycle values=",alt"}">
-				<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.id}">{$s.title|escape:"htmlall"}</a>{if $s.prevdate != ''}<br /><span class="label">Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}</span>{/if}</td>
+				<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.id}">{if !empty($s.title)}{$s.title|escape:"htmlall"}{/if}</a>{if $s.prevdate != ''}<br /><span class="label">Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}</span>{/if}</td>
 				<td>{$s.publisher|escape:"htmlall"}</td>
 				<td>{$s.countries_id|escape:"htmlall"}</td>
 				<td class="mid">

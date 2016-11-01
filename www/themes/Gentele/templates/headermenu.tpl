@@ -202,16 +202,18 @@
 							</ul>
 						</li>
 					{/if}
+					{if $parentcat.id === "0"}
+						<li class="nav-parent">
+							<a href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" data-delay="30">
+								<i class="fa fa-bolt"></i> Other<i class="fa fa-angle-down"></i></a>
+							<ul class="dropdown-menu">
+								<li><a href="{$smarty.const.WWW_TOP}/browse?t={$catClass::OTHER_ROOT}">Other</a></li>
+								<li><a href="{$smarty.const.WWW_TOP}/browse?t={$catClass::OTHER_MISC}">Misc</a></li>
+								<li><a href="{$smarty.const.WWW_TOP}/browse?t={$catClass::OTHER_HASHED}">Hashed</a></li>
+							</ul>
+						</li>
+					{/if}
 				{/foreach}
-				<li class="nav-parent">
-					<a href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" data-delay="30">
-						<i class="fa fa-bolt"></i> Other<i class="fa fa-angle-down"></i></a>
-					<ul class="dropdown-menu">
-						<li><a href="{$smarty.const.WWW_TOP}/browse?t={$catClass::OTHER_ROOT}">Other</a></li>
-						<li><a href="{$smarty.const.WWW_TOP}/browse?t={$catClass::OTHER_MISC}">Misc</a></li>
-						<li><a href="{$smarty.const.WWW_TOP}/browse?t={$catClass::OTHER_HASHED}">Hashed</a></li>
-					</ul>
-				</li>
 			{/if}
 			<ul class="nav navbar-left">
 				<li class="">
@@ -276,12 +278,6 @@
 						<li>
 							<a href="{$smarty.const.WWW_TOP}/logout" class="btn btn-default btn-flat"><i
 										class="fa fa-unlock-alt"></i> Sign out</a>
-						</li>
-						{else}
-						<li><a href="{$smarty.const.WWW_TOP}/login"><i
-										class="fa fa-lock"></i><span> Login</span></a></li>
-						<li><a href="{$smarty.const.WWW_TOP}/register"><i
-										class="fa fa-bookmark-o"></i><span> Register</span></a>
 						</li>
 						{/if}
 					</ul>

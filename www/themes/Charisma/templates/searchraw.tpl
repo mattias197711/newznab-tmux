@@ -8,7 +8,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xlg-12 portlets">
+	<div class="col-lg-12 col-sm-12 col-xs-12">
 		<div class="panel panel-default">
 			<div class="panel-body pagination2">
 				<form method="get" action="{$serverroot}searchraw">
@@ -56,7 +56,6 @@
 									{if isset($isadmin)}
 										<td><span title="procstat">{$result.procstat}</span>/<span
 													title="totalparts">{$result.totalParts}</span>/<span
-													title="regex">{if $result.regexid == ""}_{else}{$result.regexid}{/if}</span>/<span
 													title="relpart">{$result.relpart}</span>/<span
 													title="reltotalpart">{$result.reltotalpart}</span></td>
 										<td class="less">{if $result.binnum < $result.totalParts}<span
