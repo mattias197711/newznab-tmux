@@ -55,4 +55,6 @@ if (isset($_GET['i']) && isset($uid) && is_numeric($uid) && isset($rssToken) && 
 			}
 			break;
 	}
+
+	$ratings = $rating->getAllRatings();
 }

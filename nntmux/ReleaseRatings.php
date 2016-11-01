@@ -140,6 +140,8 @@ class ReleaseRatings
 	}
 
 	/**
+	 * Returns rating for a release
+	 *
 	 * @param $relid
 	 *
 	 * @return bool|\PDOStatement
@@ -151,6 +153,21 @@ class ReleaseRatings
 			return $result;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Returns all release ratings
+	 *
+	 * @return array|bool
+	 */
+	public function getAllRatings()
+	{
+		$result = $this->pdo->query(sprintf('SELECT * FROM release_ratings'));
+
+		if(!empty($result)) {
+			return $result;
+		}
 		return false;
 	}
 }
