@@ -1,8 +1,8 @@
 <?php
 namespace nntmux;
 
-use nntmux\Category;
-use nntmux\db\Settings;
+use app\models\Settings;
+use nntmux\db\DB;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Operations\Search;
 use ApaiIO\ApaiIO;
@@ -84,19 +84,19 @@ class Console
 		$options += $defaults;
 
 		$this->echooutput = ($options['Echo'] && NN_ECHOCLI);
-		$this->pdo = ($options['Settings'] instanceof Settings ? $options['Settings'] : new Settings());
+		$this->pdo = ($options['Settings'] instanceof DB ? $options['Settings'] : new DB());
 
-		$this->pubkey = $this->pdo->getSetting('amazonpubkey');
-		$this->privkey = $this->pdo->getSetting('amazonprivkey');
-		$this->asstag = $this->pdo->getSetting('amazonassociatetag');
-		$this->gameqty = ($this->pdo->getSetting('maxgamesprocessed') != '') ? $this->pdo->getSetting('maxgamesprocessed') : 150;
-		$this->sleeptime = ($this->pdo->getSetting('amazonsleep') != '') ? $this->pdo->getSetting('amazonsleep') : 1000;
+		$this->pubkey = Settings::value('APIs..amazonpubkey');
+		$this->privkey = Settings::value('APIs..amazonprivkey');
+		$this->asstag = Settings::value('APIs..amazonassociatetag');
+		$this->gameqty = (Settings::value('..maxgamesprocessed') != '') ? Settings::value('..maxgamesprocessed') : 150;
+		$this->sleeptime = (Settings::value('..amazonsleep') != '') ? Settings::value('..amazonsleep') : 1000;
 		$this->imgSavePath = NN_COVERS . 'console' . DS;
 		$this->renamed = '';
-		if ($this->pdo->getSetting('lookupgames') == 2) {
+		if (Settings::value('..lookupgames') == 2) {
 			$this->renamed = 'AND isrenamed = 1';
 		}
-		//$this->cleanconsole = ($this->pdo->getSetting('lookupgames') == 2) ? 'AND isrenamed = 1' : '';
+		//$this->cleanconsole = (Settings::value('lookupgames') == 2) ? 'AND isrenamed = 1' : '';
 		$this->catWhere = "AND categories_id BETWEEN " . Category::GAME_ROOT . " AND " . Category::GAME_OTHER;
 
 		$this->failCache =[];
@@ -191,7 +191,7 @@ class Console
 					AND con.title != ''
 					AND con.cover = 1
 					AND r.passwordstatus %s
-					AND %s %s %s
+					%s %s %s
 					GROUP BY con.id
 					ORDER BY %s %s %s",
 						Releases::showPasswords($this->pdo),
@@ -252,7 +252,7 @@ class Console
 				INNER JOIN genres ON con.genres_id = genres.id
 				WHERE con.id IN (%s)
 				AND r.id IN (%s)
-				AND %s
+				%s
 				GROUP BY con.id
 				ORDER BY %s %s",
 						(is_array($consoleIDs) ? implode(',', $consoleIDs) : -1),
@@ -321,7 +321,7 @@ class Console
 		foreach ($browsebyArr as $bbk => $bbv) {
 			if (isset($_REQUEST[$bbk]) && !empty($_REQUEST[$bbk])) {
 				$bbs = stripslashes($_REQUEST[$bbk]);
-				$browseby .= 'con.' . $bbv . ' ' . $like . ' (' . $this->pdo->escapeString('%' . $bbs . '%') . ') AND ';
+				$browseby .= 'AND con.' . $bbv . ' ' . $like . ' (' . $this->pdo->escapeString('%' . $bbs . '%') . ') AND ';
 			}
 		}
 		return $browseby;

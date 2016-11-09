@@ -1,6 +1,7 @@
 <?php
 namespace nntmux;
 
+use app\models\Settings;
 use nntmux\utility\Utility;
 
 /**
@@ -32,7 +33,7 @@ class RequestIDWeb extends RequestID
 	public function __construct(array $options = [])
 	{
 		parent::__construct($options);
-		$this->_request_hours = ($this->pdo->getSetting('request_hours') != '') ? (int)$this->pdo->getSetting('request_hours') : 1;
+		$this->_request_hours = (Settings::value('..request_hours') != '') ? (int)Settings::value('..request_hours') : 1;
 	}
 
 	/**
@@ -152,7 +153,7 @@ class RequestIDWeb extends RequestID
 
 		// Do a web lookup.
 		$returnXml = Utility::getUrl([
-				'url' => $this->pdo->getSetting('request_url'),
+				'url' => Settings::value('..request_url'),
 				'method' => 'post',
 				'postdata' => 'data=' . serialize($requestArray),
 				'verifycert' => false,

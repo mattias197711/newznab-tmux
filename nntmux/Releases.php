@@ -1,7 +1,8 @@
 <?php
 namespace nntmux;
 
-use nntmux\db\Settings;
+use app\models\Settings;
+use nntmux\db\DB;
 use nntmux\utility\Utility;
 
 /**
@@ -56,14 +57,14 @@ class Releases
 		];
 		$options += $defaults;
 
-		$this->pdo = ($options['Settings'] instanceof Settings ? $options['Settings'] : new Settings());
+		$this->pdo = ($options['Settings'] instanceof DB ? $options['Settings'] : new DB());
 		$this->groups = ($options['Groups'] instanceof Groups ? $options['Groups'] : new Groups(['Settings' => $this->pdo]));
-		$this->updategrabs = ($this->pdo->getSetting('grabstatus') == '0' ? false : true);
-		$this->passwordStatus = ($this->pdo->getSetting('checkpasswordedrar') == 1 ? -1 : 0);
+		$this->updategrabs = (Settings::value('..grabstatus') == '0' ? false : true);
+		$this->passwordStatus = (Settings::value('..checkpasswordedrar') == 1 ? -1 : 0);
 		$this->sphinxSearch = new SphinxSearch();
 		$this->releaseSearch = new ReleaseSearch($this->pdo, $this->sphinxSearch);
 		$this->category = new Category(['Settings' => $this->pdo]);
-		$this->showPasswords = self::showPasswords($this->pdo);
+		$this->showPasswords = self::showPasswords();
 	}
 
 	/**
@@ -172,7 +173,7 @@ class Releases
 				%s
 				WHERE r.nzbstatus = %d
 				AND r.passwordstatus %s
-				%s AND %s %s %s',
+				%s %s %s %s',
 				($groupName != -1 ? 'LEFT JOIN groups g ON g.id = r.groups_id' : ''),
 				NZB::NZB_ADDED,
 				$this->showPasswords,
@@ -221,7 +222,7 @@ class Releases
 				LEFT JOIN groups g ON g.id = r.groups_id
 				WHERE r.nzbstatus = %d
 				AND r.passwordstatus %s
-				AND %s %s %s %s %s
+				%s %s %s %s %s
 				ORDER BY %s %s %s
 			) r
 			LEFT JOIN categories c ON c.id = r.categories_id
@@ -256,17 +257,14 @@ class Releases
 	/**
 	 * Return site setting for hiding/showing passworded releases.
 	 *
-	 * @param Settings $pdo
-	 *
 	 * @return string
 	 */
-	public static function showPasswords(Settings $pdo)
+	public static function showPasswords()
 	{
-		$setting = $pdo->query(
-			"SELECT value FROM settings WHERE setting = 'showpasswordedrelease'",
-			true, NN_CACHE_EXPIRY_LONG
-		);
-		switch ((isset($setting[0]['value']) && is_numeric($setting[0]['value']) ? $setting[0]['value'] : 10)) {
+		$setting = Settings::value('..showpasswordedrelease', true);
+		$setting = (isset($setting) && is_numeric($setting)) ? $setting : 10;
+
+		switch ($setting) {
 			case 0: // Hide releases with a password or a potential password (Hide unprocessed releases).
 				return ('= ' . Releases::PASSWD_NONE);
 			case 1: // Show releases with no password or a potential password (Show unprocessed releases).
@@ -494,14 +492,14 @@ class Releases
 				"SELECT r.*,
 					CONCAT(cp.title, '-', c.title) AS category_name,
 					%s AS category_ids,
-					groups.name AS group_name,
+					g.name AS group_name,
 					rn.releases_id AS nfoid, re.releases_id AS reid,
 					rt.*,
 					tve.firstaired,
 					(SELECT df.failed) AS failed
 				FROM releases r
 				LEFT OUTER JOIN video_data re ON re.releases_id = r.id
-				LEFT JOIN groups ON groups.id = r.groups_id
+				LEFT JOIN groups g ON g.id = r.groups_id
 				LEFT OUTER JOIN release_nfos rn ON rn.releases_id = r.id
 				LEFT OUTER JOIN tv_episodes tve ON tve.videos_id = r.videos_id
 				LEFT JOIN categories c ON c.id = r.categories_id
@@ -593,8 +591,11 @@ class Releases
 	 */
 	public function getCount()
 	{
-		$res = $this->pdo->queryOneRow('SELECT COUNT(id) AS num FROM releases');
-		return ($res === false ? 0 : $res['num']);
+		$res = $this->pdo->query(
+			'SELECT COUNT(id) AS num FROM releases',
+			true, NN_CACHE_EXPIRY_MEDIUM
+		);
+		return (empty($res) ? 0 : $res[0]['num']);
 	}
 
 	/**
@@ -879,7 +880,7 @@ class Releases
 		}
 
 		$whereSql = sprintf(
-			"%s WHERE r.passwordstatus %s AND r.nzbstatus = %d %s %s %s %s %s %s AND %s %s %s %s %s %s",
+			"%s WHERE r.passwordstatus %s AND r.nzbstatus = %d %s %s %s %s %s %s %s %s %s %s %s %s",
 			$this->releaseSearch->getFullTextJoinString(),
 			$this->showPasswords,
 			NZB::NZB_ADDED,
@@ -889,7 +890,7 @@ class Releases
 			(array_key_exists($sizeTo, $sizeRange) ? ' AND r.size < ' . (string)(104857600 * (int)$sizeRange[$sizeTo]) . ' ' : ''),
 			($hasNfo != 0 ? ' AND r.nfostatus = 1 ' : ''),
 			($hasComments != 0 ? ' AND r.comments > 0 ' : ''),
-			($type !== 'advanced' ? $this->category->getCategorySearch($cat) : ($cat[0] != '-1' ? sprintf(' AND (r.categories_id = %d) ', $cat[0]) : '')),
+			($type !== 'advanced' ? $this->category->getCategorySearch($cat) : ($cat[0] != '-1' ? sprintf('AND r.categories_id = %d ', $cat[0]) : '')),
 			($daysNew != -1 ? sprintf(' AND r.postdate < (NOW() - INTERVAL %d DAY) ', $daysNew) : ''),
 			($daysOld != -1 ? sprintf(' AND r.postdate > (NOW() - INTERVAL %d DAY) ', $daysOld) : ''),
 			(count($excludedCats) > 0 ? ' AND r.categories_id NOT IN (' . implode(',', $excludedCats) . ')' : ''),
@@ -902,7 +903,7 @@ class Releases
 				CONCAT(cp.title, ' > ', c.title) AS category_name,
 				%s AS category_ids,
 				(SELECT df.failed) AS failed,
-				groups.name AS group_name,
+				g.name AS group_name,
 				rn.releases_id AS nfoid,
 				re.releases_id AS reid,
 				cp.id AS categoryparentid,
@@ -914,7 +915,7 @@ class Releases
 			LEFT OUTER JOIN videos v ON r.videos_id = v.id
 			LEFT OUTER JOIN tv_episodes tve ON r.tv_episodes_id = tve.id
 			LEFT OUTER JOIN release_nfos rn ON rn.releases_id = r.id
-			LEFT JOIN groups ON groups.id = r.groups_id
+			LEFT JOIN groups g ON g.id = r.groups_id
 			LEFT JOIN categories c ON c.id = r.categories_id
 			LEFT JOIN categories cp ON cp.id = c.parentid
 			LEFT OUTER JOIN dnzb_failures df ON df.release_id = r.id
@@ -1027,7 +1028,7 @@ class Releases
 			WHERE r.categories_id BETWEEN %d AND %d
 			AND r.nzbstatus = %d
 			AND r.passwordstatus %s
-			%s %s AND %s %s %s",
+			%s %s %s %s %s",
 			($name !== '' ? $this->releaseSearch->getFullTextJoinString() : ''),
 			Category::TV_ROOT,
 			Category::TV_OTHER,
@@ -1048,7 +1049,7 @@ class Releases
 				tve.series, tve.episode, tve.se_complete, tve.title, tve.firstaired, tve.summary,
 				CONCAT(cp.title, ' > ', c.title) AS category_name,
 				%s AS category_ids,
-				groups.name AS group_name,
+				g.name AS group_name,
 				rn.releases_id AS nfoid,
 				re.releases_id AS reid
 			FROM releases r
@@ -1057,7 +1058,7 @@ class Releases
 			LEFT OUTER JOIN tv_episodes tve ON r.tv_episodes_id = tve.id
 			LEFT JOIN categories c ON c.id = r.categories_id
 			LEFT JOIN categories cp ON cp.id = c.parentid
-			LEFT JOIN groups ON groups.id = r.groups_id
+			LEFT JOIN groups g ON g.id = r.groups_id
 			LEFT OUTER JOIN video_data re ON re.releases_id = r.id
 			LEFT OUTER JOIN release_nfos rn ON rn.releases_id = r.id
 			%s",
@@ -1076,7 +1077,9 @@ class Releases
 
 		$releases = $this->pdo->query($sql, true, NN_CACHE_EXPIRY_MEDIUM);
 		if (!empty($releases) && count($releases)) {
-			$releases[0]['_totalrows'] = $this->getPagerCount($baseSql);
+			$releases[0]['_totalrows'] = $this->getPagerCount(
+				preg_replace('#LEFT(\s+OUTER)?\s+JOIN\s+(?!tv_episodes)\s+.*ON.*=.*\n#i', ' ', $baseSql)
+			);
 		}
 		return $releases;
 	}
@@ -1097,7 +1100,7 @@ class Releases
 			"%s
 			WHERE r.passwordstatus %s
 			AND r.nzbstatus = %d
-			%s %s AND %s %s",
+			%s %s %s %s",
 			($name !== '' ? $this->releaseSearch->getFullTextJoinString() : ''),
 			$this->showPasswords,
 			NZB::NZB_ADDED,
@@ -1111,13 +1114,13 @@ class Releases
 			"SELECT r.*,
 				CONCAT(cp.title, ' > ', c.title) AS category_name,
 				%s AS category_ids,
-				groups.name AS group_name,
+				g.name AS group_name,
 				rn.releases_id AS nfoid,
 				re.releases_id AS reid
 			FROM releases r
 			LEFT JOIN categories c ON c.id = r.categories_id
 			LEFT JOIN categories cp ON cp.id = c.parentid
-			LEFT JOIN groups ON groups.id = r.groups_id
+			LEFT JOIN groups g ON g.id = r.groups_id
 			LEFT OUTER JOIN release_nfos rn ON rn.releases_id = r.id
 			LEFT OUTER JOIN releaseextrafull re ON re.releases_id = r.id
 			%s",
@@ -1158,7 +1161,7 @@ class Releases
 			WHERE r.categories_id BETWEEN " . Category::MOVIE_ROOT . " AND " . Category::MOVIE_OTHER . "
 			AND r.nzbstatus = %d
 			AND r.passwordstatus %s
-			%s %s AND %s %s %s",
+			%s %s %s %s %s",
 			($name !== '' ? $this->releaseSearch->getFullTextJoinString() : ''),
 			NZB::NZB_ADDED,
 			$this->showPasswords,
@@ -1358,9 +1361,9 @@ class Releases
 		return $this->pdo->queryOneRow(
 			sprintf(
 				"SELECT r.*, CONCAT(cp.title, ' > ', c.title) AS category_name,
-				groups.name AS group_name
+				g.name AS group_name
 				FROM releases r
-				LEFT JOIN groups ON groups.id = r.groups_id
+				LEFT JOIN groups g ON g.id = r.groups_id
 				LEFT JOIN categories c ON c.id = r.categories_id
 				LEFT JOIN categories cp ON cp.id = c.parentid
 				WHERE r.categories_id BETWEEN " . Category::TV_ROOT . " AND " . Category::TV_OTHER . "

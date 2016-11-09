@@ -1,7 +1,8 @@
 <?php
 namespace nntmux;
 
-use nntmux\db\Settings;
+use app\models\Settings;
+use nntmux\db\DB;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Operations\Search;
 use ApaiIO\ApaiIO;
@@ -75,15 +76,15 @@ class Music
 
 		$this->echooutput = ($options['Echo'] && NN_ECHOCLI);
 
-		$this->pdo = ($options['Settings'] instanceof Settings ? $options['Settings'] : new Settings());
-		$this->pubkey = $this->pdo->getSetting('amazonpubkey');
-		$this->privkey = $this->pdo->getSetting('amazonprivkey');
-		$this->asstag = $this->pdo->getSetting('amazonassociatetag');
-		$this->musicqty = ($this->pdo->getSetting('maxmusicprocessed') != '') ? $this->pdo->getSetting('maxmusicprocessed') : 150;
-		$this->sleeptime = ($this->pdo->getSetting('amazonsleep') != '') ? $this->pdo->getSetting('amazonsleep') : 1000;
+		$this->pdo = ($options['Settings'] instanceof DB ? $options['Settings'] : new DB());
+		$this->pubkey = Settings::value('APIs..amazonpubkey');
+		$this->privkey = Settings::value('APIs..amazonprivkey');
+		$this->asstag = Settings::value('APIs..amazonassociatetag');
+		$this->musicqty = (Settings::value('..maxmusicprocessed') != '') ? Settings::value('..maxmusicprocessed') : 150;
+		$this->sleeptime = (Settings::value('..amazonsleep') != '') ? Settings::value('..amazonsleep') : 1000;
 		$this->imgSavePath = NN_COVERS . 'music' . DS;
 		$this->renamed = '';
-		if ($this->pdo->getSetting('lookupmusic') == 2) {
+		if (Settings::value('..lookupmusic') == 2) {
 			$this->renamed = 'AND isrenamed = 1';
 		}
 
@@ -205,7 +206,7 @@ class Music
 				AND m.title != ''
 				AND m.cover = 1
 				AND r.passwordstatus %s
-				AND %s %s %s
+				%s %s %s
 				GROUP BY m.id
 				ORDER BY %s %s %s",
 						Releases::showPasswords($this->pdo),
@@ -263,7 +264,7 @@ class Music
 			INNER JOIN musicinfo m ON m.id = r.musicinfo_id
 			WHERE m.id IN (%s)
 			AND r.id IN (%s)
-			AND %s
+			%s
 			GROUP BY m.id
 			ORDER BY %s %s",
 				(is_array($musicIDs) ? implode(',', $musicIDs) : -1),
@@ -344,9 +345,9 @@ class Music
 			if (isset($_REQUEST[$bbk]) && !empty($_REQUEST[$bbk])) {
 				$bbs = stripslashes($_REQUEST[$bbk]);
 				if (preg_match('/id/i', $bbv)) {
-					$browseby .= 'm.' . $bbv . ' = ' . $bbs . ' AND ';
+					$browseby .= 'AND m.' . $bbv . ' = ' . $bbs . ' AND ';
 				} else {
-					$browseby .= 'm.' . $bbv . ' ' . $this->pdo->likeString($bbs, true, true) . ' AND ';
+					$browseby .= 'AND m.' . $bbv . ' ' . $this->pdo->likeString($bbs, true, true) . ' AND ';
 				}
 			}
 		}

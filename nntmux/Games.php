@@ -1,7 +1,8 @@
 <?php
 namespace nntmux;
 
-use nntmux\db\Settings;
+use app\models\Settings;
+use nntmux\db\DB;
 
 
 class Games
@@ -105,21 +106,21 @@ class Games
 		$options += $defaults;
 		$this->echoOutput = ($options['Echo'] && NN_ECHOCLI);
 
-		$this->pdo = ($options['Settings'] instanceof Settings ? $options['Settings'] : new Settings());
+		$this->pdo = ($options['Settings'] instanceof DB ? $options['Settings'] : new DB());
 
-		$this->publicKey = $this->pdo->getSetting('giantbombkey');
-		$this->gameQty = ($this->pdo->getSetting('maxgamesprocessed') != '') ? $this->pdo->getSetting('maxgamesprocessed') : 150;
-		$this->sleepTime = ($this->pdo->getSetting('amazonsleep') != '') ? $this->pdo->getSetting('amazonsleep') : 1000;
+		$this->publicKey = Settings::value('APIs..giantbombkey');
+		$this->gameQty = (Settings::value('..maxgamesprocessed') != '') ? Settings::value('..maxgamesprocessed') : 150;
+		$this->sleepTime = (Settings::value('..amazonsleep') != '') ? Settings::value('..amazonsleep') : 1000;
 		$this->imgSavePath = NN_COVERS . 'games' . DS;
 		$this->renamed = '';
 		$this->matchPercentage = 60;
 		$this->maxHitRequest = false;
 		$this->cookie = NN_TMP . 'xxx.cookie';
-		if ($this->pdo->getSetting('lookupgames') == 2) {
+		if (Settings::value('..lookupgames') == 2) {
 			$this->renamed = 'AND isrenamed = 1';
 		}
 		$this->catWhere = 'AND categories_id = ' . Category::PC_GAMES . ' ';
-		//$this->cleangames = ($this->pdo->getSetting('('lookupgames') == 2) ? 'AND isrenamed = 1' : '';
+		//$this->cleangames = (Settings::value('('lookupgames') == 2) ? 'AND isrenamed = 1' : '';
 	}
 
 	public function getGamesInfo($id)
@@ -205,7 +206,7 @@ class Games
 				AND con.title != ''
 				AND con.cover = 1
 				AND r.passwordstatus %s
-				AND %s %s %s %s
+				%s %s %s %s
 				GROUP BY con.id
 				ORDER BY %s %s %s",
 						Releases::showPasswords($this->pdo),
@@ -263,7 +264,7 @@ class Games
 				INNER JOIN gamesinfo con ON con.id = r.gamesinfo_id
 				WHERE con.id IN (%s)
 				AND r.id IN (%s)
-				AND %s
+				%s
 				GROUP BY con.id
 				ORDER BY %s %s",
 						(is_array($gameIDs) ? implode(',', $gameIDs) : -1),
@@ -336,9 +337,9 @@ class Games
 			if (isset($_REQUEST[$bbk]) && !empty($_REQUEST[$bbk])) {
 				$bbs = stripslashes($_REQUEST[$bbk]);
 				if ($bbk === 'year') {
-					$browseby .= 'YEAR (con.releasedate) ' . $like . ' (' . $this->pdo->escapeString('%' . $bbs . '%') . ') AND ';
+					$browseby .= 'AND YEAR (con.releasedate) ' . $like . ' (' . $this->pdo->escapeString('%' . $bbs . '%') . ') AND ';
 				} else {
-					$browseby .= 'con.' . $bbv . ' ' . $like . ' (' . $this->pdo->escapeString('%' . $bbs . '%') . ') AND ';
+					$browseby .= 'AND con.' . $bbv . ' ' . $like . ' (' . $this->pdo->escapeString('%' . $bbs . '%') . ') AND ';
 				}
 			}
 		}

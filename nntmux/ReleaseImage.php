@@ -1,7 +1,7 @@
 <?php
 namespace nntmux;
 
-use nntmux\db\Settings;
+use nntmux\db\DB;
 use nntmux\utility\Utility;
 
 /**
@@ -55,7 +55,7 @@ class ReleaseImage
 	{
 		// Creates the NN_COVERS constant
 		if ($pdo === null) {
-			$pdo = new Settings();
+			$pdo = new DB();
 		}
 		//                                                            Table    |  Column
 		$this->audSavePath = NN_COVERS . 'audiosample' . DS; // releases    guid
@@ -97,9 +97,6 @@ class ReleaseImage
 				$imagick->readImageBlob($img);
 			} catch (\ImagickException $imgError) {
 				echo 'Bad image data, skipping processing' . PHP_EOL;
-				if (NN_DEBUG) {
-					echo $imgError;
-				}
 				$imgFail = true;
 			}
 			if ($imgFail === false) {
